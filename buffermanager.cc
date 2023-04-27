@@ -11,6 +11,8 @@
 #include "parameter.h"
 #include "executor.h"
 #include "workload_generator.h"
+#include "ctime"
+#include "chrono"
 
 using namespace std;
 using namespace bufmanager;
@@ -41,11 +43,16 @@ int main(int argc, char *argvx[])
 
     std::cerr << "Issuing operations ... " << std::endl << std::flush;  
     // Execute Workload
-    int s = runWorkload(_env); 
+    auto start = std::chrono::system_clock::now();
+    int s = runWorkload(_env);
+    auto end  = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::cout << "Execution Latency: " << elapsed_seconds.count() << "s" << std::endl;
   }
 
   // Print Different Statistics
-  Buffer::printStats();
+  Buffer *buffer_instance = Buffer::getBufferInstance(_env);
+  buffer_instance->printStats();
   return 0;
 }
 
@@ -71,14 +78,16 @@ int runWorkload(Simulation_Environment* _env) {
     {
         case 'R':
 	  workload_file >> offset;
-          workload_executer.read(buffer_instance, pageId, offset, _env->algorithm);
+          workload_executer.read(buffer_instance, pageId, offset, _env->algorithm, _env->simulation_on_disk, false);
           break;
 
         case 'W':
 	  workload_file >> offset >> tmp_new_entry;
-          workload_executer.write(buffer_instance, pageId, offset, tmp_new_entry, _env->algorithm);
+          workload_executer.write(buffer_instance, pageId, offset, tmp_new_entry, _env->algorithm, _env->simulation_on_disk);
 	  tmp_new_entry.clear();
           break;
+        default:
+            break;
     }
     instruction='\0';
   }

@@ -1,7 +1,7 @@
 
 #ifndef PARAMETER_H_
 #define PARAMETER_H_
- 
+ #define CFLRU 2
 
 #include <iostream>
 
