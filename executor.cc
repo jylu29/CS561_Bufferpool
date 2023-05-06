@@ -266,12 +266,13 @@ int Buffer::CFLRU_using_array() {
 // The below function implements LRU-WSR(LRU Write Sequence Reordering)
 int Buffer::LRUWSR()
 {
-  int index = 0;
+  int index;
 
   bool found = false;
 
   while (!found)
   {
+      index = 0;
       int min_timestamp = buffer_pool[0].timestamp;
     // First the least recently used page is found
     for (int i = 1; i < buffer_pool.size(); ++i)
